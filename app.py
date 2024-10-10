@@ -112,11 +112,30 @@ chat_session = model.start_chat(
 
 # =============================================================================
 
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import random
 
 # Set up the Flask app
 app = Flask(__name__)
+
+# Directory to save uploaded images
+UPLOAD_FOLDER = 'uploads'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+@app.route('/upload-image', methods=['POST'])
+def upload_image():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file:
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(filepath)  # Save the image to the server
+        return jsonify({'message': 'Image uploaded successfully', 'file_path': filepath}), 200
 
 @app.route('/random-number', methods=['GET'])
 def get_random_number():
