@@ -122,11 +122,15 @@ app = Flask(__name__)
 def get_random_number():
   number = random.choice([0, 1, 2])
   
-  response = chat_session.send_message("This is a test message")
+  parts = [
+    files[21],
+    "Here is one current camera view photo. Respond me with the most suitable pose image number."
+  ]
+  response = chat_session.send_message(parts)
 
   return jsonify({"random_number": number, "response": response.text})
   return jsonify({"random_number": number})
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5000, debug=True)  # Set host to '0.0.0.0'
+  app.run(host='0.0.0.0', port=5000, debug=False)  # Set host to '0.0.0.0'
 
