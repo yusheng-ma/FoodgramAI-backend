@@ -3,13 +3,20 @@ import google.generativeai as genai
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
-def upload_to_gemini(path, mime_type=None):
-  """Uploads the given file to Gemini.
+# Get a list of uploaded files
+uploaded_files = dict()
+for file in genai.list_files():
+  uploaded_files[file.display_name] = file
 
-  See https://ai.google.dev/gemini-api/docs/prompting_with_media
-  """
-  file = genai.upload_file(path, mime_type=mime_type)
-  print(f"Uploaded file '{file.display_name}' as: {file.uri}")
+def upload_to_gemini(path, mime_type=None):
+  display_name = os.path.basename(path)
+
+  if display_name in uploaded_files:
+    print(f"File '{display_name}' already exists in Gemini.")
+    return uploaded_files[display_name]
+  
+  file = genai.upload_file(path, mime_type=mime_type, display_name=display_name)
+  print(f"Uploaded file '{file.name}'({file.display_name}) as: {file.uri}")
   return file
 
 # Create the model
@@ -24,13 +31,9 @@ generation_config = {
 model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
-  # safety_settings = Adjust safety settings
-  # See https://ai.google.dev/gemini-api/docs/safety-settings
   system_instruction="Your response should contain only one integer to indicate the pose image number (for example, if your answer is Image 1, you would simply response me with 1). You shall not example the choice for me.",
 )
 
-# TODO Make these files available on the local file system
-# You may need to update the file paths
 files = [
   upload_to_gemini("./assets/pose/1.png", mime_type="image/png"),
   upload_to_gemini("./assets/pose/2.png", mime_type="image/png"),
@@ -119,9 +122,9 @@ app = Flask(__name__)
 def get_random_number():
   number = random.choice([0, 1, 2])
   
-  # response = chat_session.send_message("This is a test message")
+  response = chat_session.send_message("This is a test message")
 
-  # return jsonify({"random_number": number, "response": response.text})
+  return jsonify({"random_number": number, "response": response.text})
   return jsonify({"random_number": number})
 
 if __name__ == '__main__':
