@@ -121,21 +121,30 @@ app = Flask(__name__)
 # Directory to save uploaded images
 UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+  os.makedirs(UPLOAD_FOLDER)
 
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
-    if 'image' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
+  if 'image' not in request.files:
+    return jsonify({'error': 'No file part'}), 400
 
-    file = request.files['image']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+  file = request.files['image']
+  if file.filename == '':
+    return jsonify({'error': 'No selected file'}), 400
 
-    if file:
-        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-        file.save(filepath)  # Save the image to the server
-        return jsonify({'message': 'Image uploaded successfully', 'file_path': filepath}), 200
+  if file:
+    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(filepath)  # Save the image to the server
+
+    # Upload the image to Gemini
+    file = upload_to_gemini(filepath, mime_type="image/jpeg")
+    parts = [
+        file,
+        "Here is one current camera view photo. Respond me with the most suitable pose image number."
+    ]
+    response = chat_session.send_message(parts)
+
+    return jsonify({'message': 'Image uploaded successfully', 'file_path': filepath, 'response': response.text}), 200
 
 @app.route('/random-number', methods=['GET'])
 def get_random_number():
