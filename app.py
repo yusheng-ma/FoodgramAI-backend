@@ -122,7 +122,7 @@ UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
   os.makedirs(UPLOAD_FOLDER)
 
-@app.route('/save-image', methods=['POST'])
+@app.route('/save_image', methods=['POST'])
 def save_image():
   if 'image' not in request.files:
     return jsonify({'error': 'No file part'}), 400
@@ -152,6 +152,29 @@ def get_overlay_number():
   response = chat_session.send_message(message_parts)
 
   return jsonify({'message': 'Get overlay number successfully', 'number': response.text}), 200
+
+@app.route('/get_processed_image', methods=['POST'])
+def get_processed_image():
+  data = request.get_json()
+  file_path = data.get('file_path') # for testing purpose, file_path is actually the image url
+  # if not file_path or not os.path.exists(file_path):
+  #   return jsonify({'error': 'Invalid file path'}), 400
+
+  # Simulate the response from OpenAI API: ?processed=true
+  response = file_path + "?processed=true"
+
+  return jsonify({'message': 'Image processed successfully', 'response': response}), 200
+
+@app.route('/get_caption', methods=['POST'])
+def get_caption():
+  data = request.get_json()
+  text = data.get('text')
+  if not text:
+    return jsonify({'error': 'Invalid text input'}), 400
+
+  # Simulate the response from OpenAI API
+  caption = "這是 AI 生成的文案"
+  return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=False)  # Set host to '0.0.0.0'
