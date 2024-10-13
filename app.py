@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
-from gemini_util import ai_overlay_number
+from gemini_util import ai_overlay_number, ai_generate_caption
 from image_util import convert_to_warm_tone
 
 # Set up the Flask app
@@ -55,8 +55,7 @@ def get_caption():
   if not text:
     return jsonify({'error': 'Invalid text input'}), 400
 
-  # Simulate the response from OpenAI API
-  caption = "這是 AI 生成的文案"
+  caption = ai_generate_caption(text)  # Get the caption from Gemini
   return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
 
 if __name__ == '__main__':
