@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
-from gemini_util import upload_to_gemini, chat_session
+from gemini_util import ai_overlay_number
 from image_util import convert_to_warm_tone
 
 # Set up the Flask app
@@ -32,15 +32,9 @@ def get_overlay_number():
   if not file_path or not os.path.exists(file_path):
     return jsonify({'error': 'Invalid file path'}), 400
 
-  # Upload the image to Gemini
-  gemini_file = upload_to_gemini(file_path, mime_type="image/jpeg")
-  message_parts = [
-    gemini_file,
-    "Here is one current camera view photo. Respond me with the most suitable pose image number."
-  ]
-  response = chat_session.send_message(message_parts)
+  number = ai_overlay_number(file_path)  # Get the overlay number from Gemini
 
-  return jsonify({'message': 'Get overlay number successfully', 'number': response.text}), 200
+  return jsonify({'message': 'Get overlay number successfully', 'number': number}), 200
 
 @app.route('/get_processed_image', methods=['POST'])
 def get_processed_image():
