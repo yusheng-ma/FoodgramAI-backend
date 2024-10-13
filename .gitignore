@@ -1,2 +1,4 @@
 uploads/*
+processed/*
+
 __pycache__/*

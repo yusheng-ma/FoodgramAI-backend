@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify, send_file
 from gemini_util import upload_to_gemini, chat_session
+from image_util import convert_to_warm_tone
 
 # Set up the Flask app
 app = Flask(__name__)
@@ -48,11 +49,10 @@ def get_processed_image():
   if not file_path or not os.path.exists(file_path):
     return jsonify({'error': 'Invalid file path'}), 400
 
-  # Simulate the response from OpenAI API: ?processed=true
-  processed_file_path = file_path
+  # Convert it to warm tone, and be saved and returned the processed file path
+  processed_file_path = convert_to_warm_tone(file_path)
 
   return send_file(processed_file_path, mimetype='image/jpeg')
-  return jsonify({'message': 'Image processed successfully', 'response': response}), 200
 
 @app.route('/get_caption', methods=['POST'])
 def get_caption():
