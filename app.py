@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import os
 import google.generativeai as genai
 
@@ -157,12 +157,13 @@ def get_overlay_number():
 def get_processed_image():
   data = request.get_json()
   file_path = data.get('file_path') # for testing purpose, file_path is actually the image url
-  # if not file_path or not os.path.exists(file_path):
-  #   return jsonify({'error': 'Invalid file path'}), 400
+  if not file_path or not os.path.exists(file_path):
+    return jsonify({'error': 'Invalid file path'}), 400
 
   # Simulate the response from OpenAI API: ?processed=true
-  response = file_path + "?processed=true"
+  processed_file_path = file_path
 
+  return send_file(processed_file_path, mimetype='image/jpeg')
   return jsonify({'message': 'Image processed successfully', 'response': response}), 200
 
 @app.route('/get_caption', methods=['POST'])
