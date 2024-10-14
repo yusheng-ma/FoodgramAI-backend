@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
-from gemini_util import ai_overlay_number, ai_generate_caption
+from gemini_util import ai_overlay_number, ai_generate_caption, ai_pick_overlay_image
 from image_util import convert_to_warm_tone
 
 # Set up the Flask app
@@ -25,6 +25,7 @@ def save_image():
     uploaded_file.save(file_path)  # Save the image to the server
     return jsonify({'message': 'Image saved successfully', 'file_path': file_path}), 200
 
+# will no longer use it? maybe?
 @app.route('/get_overlay_number', methods=['POST'])
 def get_overlay_number():
   data = request.get_json()
@@ -35,6 +36,18 @@ def get_overlay_number():
   number = ai_overlay_number(file_path)  # Get the overlay number from Gemini
 
   return jsonify({'message': 'Get overlay number successfully', 'number': number}), 200
+
+@app.route('/get_overlay_image', methods=['POST'])
+def get_overlay_image():
+  data = request.get_json()
+  file_path = data.get('file_path')
+  # for testing purpose, file_path is actually the image url
+  # if not file_path or not os.path.exists(file_path):
+  #   return jsonify({'error': 'Invalid file path'}), 400
+
+  overlay_image_file_path = ai_pick_overlay_image(file_path)  # Pick an overlay image from Gemini
+
+  return send_file(overlay_image_file_path, mimetype='image/jpeg')
 
 @app.route('/get_processed_image', methods=['POST'])
 def get_processed_image():

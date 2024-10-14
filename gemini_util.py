@@ -90,6 +90,15 @@ def ai_overlay_number(file_path):
   response = chat_session.send_message(message_parts)
   return response.text
 
+def ai_pick_overlay_image(file_path):
+  # randomly pick one image under /assets/ig/cake_coffee
+  import random
+  image_files = os.listdir("./assets/ig/cake_coffee")
+  image_file = random.choice(image_files)
+  image_path = f"./assets/ig/cake_coffee/{image_file}"
+
+  return image_path
+
 def ai_generate_caption(text):
   chat_session = model.start_chat(
     history=[
