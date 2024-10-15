@@ -36,13 +36,27 @@ model = genai.GenerativeModel(
 )
 
 files = [
-  upload_to_gemini("./assets/milk/1.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/2.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/3.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/4.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/5.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/6.png", mime_type="image/png"),
-  upload_to_gemini("./assets/milk/7.png", mime_type="image/png"),
+    upload_to_gemini("./assets/ig/拉麵_1.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/拉麵_2.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/拉麵_3.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/火鍋_1.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/火鍋_2.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/火鍋_3.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/燒肉_1.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/燒肉_2.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/燒肉_3.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_1.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_2.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_3.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_4.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_5.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_6.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_7.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_8.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/甜點_9.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/西餐_1.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/西餐_2.jpg", mime_type="image/jpeg"),
+    upload_to_gemini("./assets/ig/西餐_3.jpg", mime_type="image/jpeg"),
 ]
 
 def ai_overlay_number(file_path):
@@ -90,18 +104,68 @@ def ai_overlay_number(file_path):
   response = chat_session.send_message(message_parts)
   return response.text
 
-def ai_pick_overlay_image(file_path):
-  # randomly pick one image under /assets/ig/cake_coffee
-  import random
-  image_files = os.listdir("./assets/ig/cake_coffee")
-  image_file = random.choice(image_files)
-  image_path = f"./assets/ig/cake_coffee/{image_file}"
+def ai_pick_overlay_image(current_photo_path, category=""):
+  chat_session = model.start_chat(
+    history=[
+      {
+        "role": "user",
+        "parts": [
+          files[0],
+          files[1],
+          files[2],
+          files[3],
+          files[4],
+          files[5],
+          files[6],
+          files[7],
+          files[8],
+          files[9],
+          files[10],
+          files[11],
+          files[12],
+          files[13],
+          files[14],
+          files[15],
+          files[16],
+          files[17],
+          files[18],
+          files[19],
+          files[20],
+          "\nYou are a professional Instagram foodgram post photographer. Your task is to recommend example food photos according to the user's current food photo and simple description.\n\nI have uploaded 21 example food photos with the following categories: 火鍋, 西餐, 拉麵, 甜點, 燒肉. Each photo is named accordingly, such as 火鍋_1.jpg, 西餐_2.jpg, and so on. Please remember these categories and photo names.\n\nFirst of all, please describe each image in the following format: {photo name}: {description}. Then, when a user uploads a current food photo with a simple description like \"我吃的是 甜點,\" recommend the three most relevant example food photos from the uploaded ones based on the presentation style and the description. **Do not explain anything. Only return the filenames of the three recommended example food photos, separated by commas without spaces, under all circumstances. If there are no matching food photos, still return any three filenames from the uploaded examples.**\n\n**Example output:** 甜點_1.jpg,甜點_3.jpg,甜點_6.jpg",
+        ],
+      },
+      {
+        "role": "model",
+        "parts": [
+          "Here is the description for each image:\n\n火鍋_1.jpg: A hot pot with two different broths, one spicy and one clear, with various meats, vegetables, and noodles around it.\n火鍋_2.jpg: A hot pot with two different broths, one clear and one spicy, with various meats and vegetables around it.\n火鍋_3.jpg: A hot pot with two different broths, one clear and one spicy, with various meats and vegetables around it.\n西餐_1.jpg: A bowl of creamy pasta with a poached egg on top, served with a side of toasted bread and a cup of coffee.\n西餐_2.jpg: A plate of fried chicken, yellow rice, and French fries, served with a side of soup and a glass of milk tea.\n西餐_3.jpg: A plate of poached eggs with a creamy sauce, served on a bed of greens and toasted bread, with a cup of coffee on the side.\n拉麵_1.jpg: A bowl of spicy ramen with pork slices, green onions, and red pepper flakes.\n拉麵_2.jpg: A bowl of ramen with pork slices, green onions, bamboo shoots, and a piece of seaweed.\n拉麵_3.jpg: A bowl of ramen with pork slices, green onions, bamboo shoots, and a soft-boiled egg.\n甜點_1.jpg: A slice of tiramisu topped with chocolate shavings.\n甜點_2.jpg: A plate of crème brûlée with a caramelized sugar crust.\n甜點_3.jpg: A plate of assorted cheesecakes, with a green tea roll in the background.\n甜點_4.jpg: A plate of crème brûlée with a caramelized sugar crust.\n甜點_5.jpg: A box of assorted tarts, including blueberry, spinach, matcha, and strawberry.\n甜點_6.jpg: A slice of cake topped with a fig slice.\n甜點_7.jpg: A slice of cheesecake with a cup of black coffee.\n甜點_8.jpg: Two slices of French toast topped with powdered sugar and a sprig of rosemary.\n甜點_9.jpg: A vegetarian sandwich served with a cup of latte.\n燒肉_1.jpg: A plate of raw beef and pork slices, ready to be grilled on a hotplate.\n燒肉_2.jpg: A plate of raw beef and pork slices, ready to be grilled on a hotplate.\n燒肉_3.jpg: A plate of raw beef and tongue slices, ready to be grilled, served with rice, salad, and soup.\n",
+        ],
+      },
+    ]
+  )
 
-  return image_path
+  gemini_file = upload_to_gemini(current_photo_path, mime_type="image/jpeg")
+
+  if category != "":
+    message_parts = [
+      gemini_file,
+      f"我吃的是 {category}",
+      "**Do not explain anything. Only return the filenames of the three recommended example food photos, separated by commas without spaces, under all circumstances. If there are no matching food photos, still return any three filenames from the uploaded examples.**\n**Example output:** 甜點_1.jpg,甜點_3.jpg,甜點_6.jpg"
+    ]
+  else:
+    message_parts = [
+      gemini_file,
+      "**Do not explain anything. Only return the filenames of the three recommended example food photos, separated by commas without spaces, under all circumstances. If there are no matching food photos, still return any three filenames from the uploaded examples.**\n**Example output:** 甜點_1.jpg,甜點_3.jpg,甜點_6.jpg"
+    ]
+
+  response = chat_session.send_message(message_parts)
+  overlay_image_paths = response.text.split(",")
+  overlay_image_paths = [f"./assets/ig/{path}" for path in overlay_image_paths]
+
+  return overlay_image_paths
 
 def ai_generate_caption(store_name, items, review):
   response = model.generate_content([
-    "你是一位專業的Instagram美食文案撰寫者。你的任務是根據用戶提供的店名、品項和心得，生成一篇適合在Instagram上發布的美食貼文文案。\n要求：\n1. 文案需包含餐廳名稱、品項以及簡短的心得，語氣輕鬆且富有熱情。\n2. 請參考範例風格，但避免直接模仿範例中的句式結構，鼓勵文案中使用多樣化的表達方式與詞彙，讓每一篇文案都有其獨特性和創意。\n3. 適當插入表情符號（emoji），數量適中，與文案內容匹配，但表情符號的選擇和位置可以隨情境自由變化。\n4. 文案末尾需加上相關的標籤（hashtags），格式與範例相似，但可以自由選擇不同的標籤來保持變化性。\n特別提醒：你可以使用不同的語氣、句型結構和描述方式來呈現同一主題，讓每篇文案看起來都新穎獨特。可以以心得來豐富文案，但保持內容簡潔不冗長。",
+    "你是一位專業的Instagram美食文案撰寫者。你的任務是根據用戶提供的店名、品項和心得，生成一篇適合在Instagram上發布的美食貼文文案。\n要求：\n1. 文案需包含餐廳名稱、品項(每個品項獨立成行，通常以逗點或頓點區分)以及簡短的心得，語氣輕鬆且富有熱情。\n2. 請參考範例風格，但避免直接模仿範例中的句式結構，鼓勵文案中使用多樣化的表達方式與詞彙，讓每一篇文案都有其獨特性和創意。\n3. 適當插入表情符號（emoji），數量適中，與文案內容匹配，但表情符號的選擇和位置可以隨情境自由變化。\n4. 文案末尾需加上相關的標籤（hashtags），格式與範例相似，但可以自由選擇不同的標籤來保持變化性。\n特別提醒：你可以使用不同的語氣、句型結構和描述方式來呈現同一主題，讓每篇文案看起來都新穎獨特。可以以心得來豐富文案，但保持內容簡潔不冗長。",
     "店名: 幻猻家珈琲 Pallas Cafe",
     "品項: 小花奇諾、焦糖布丁",
     "心得: 特調咖啡香甜可口，但對我而言稍微太甜了一點。",

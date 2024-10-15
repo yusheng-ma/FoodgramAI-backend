@@ -41,13 +41,15 @@ def get_overlay_number():
 def get_overlay_image():
   data = request.get_json()
   file_path = data.get('file_path')
+  category = data.get('category')
   # for testing purpose, file_path is actually the image url
-  # if not file_path or not os.path.exists(file_path):
-  #   return jsonify({'error': 'Invalid file path'}), 400
+  if not file_path or not os.path.exists(file_path):
+    return jsonify({'error': 'Invalid file path'}), 400
 
-  overlay_image_file_path = ai_pick_overlay_image(file_path)  # Pick an overlay image from Gemini
-
-  return send_file(overlay_image_file_path, mimetype='image/jpeg')
+  overlay_image_file_paths = ai_pick_overlay_image(file_path, category)  # Pick an overlay image from Gemini
+  # there are three files
+  
+  return send_file(overlay_image_file_paths[0], mimetype='image/jpeg')
 
 @app.route('/get_processed_image', methods=['POST'])
 def get_processed_image():
