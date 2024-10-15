@@ -64,11 +64,14 @@ def get_processed_image():
 @app.route('/get_caption', methods=['POST'])
 def get_caption():
   data = request.get_json()
-  text = data.get('text')
-  if not text:
-    return jsonify({'error': 'Invalid text input'}), 400
+  store_name = data.get('storeName')
+  items = data.get('items')
+  review = data.get('review')
 
-  caption = ai_generate_caption(text)  # Get the caption from Gemini
+  if not store_name or not items or not review:
+    return jsonify({'error': 'Invalid input'}), 400
+
+  caption = ai_generate_caption(store_name, items, review)  # Get the caption from Gemini
   return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
 
 if __name__ == '__main__':
