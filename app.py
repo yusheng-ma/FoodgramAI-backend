@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
-from gemini_util import ai_overlay_number, ai_generate_caption, ai_pick_overlay_image
+from gemini_util import ai_overlay_number, ai_generate_caption, ai_pick_overlay_image, ai_choose_warm_tone_parameter
 from image_util import convert_to_warm_tone
 
 # Set up the Flask app
@@ -59,7 +59,10 @@ def get_processed_image():
     return jsonify({'error': 'Invalid file path'}), 400
 
   # Convert it to warm tone, and be saved and returned the processed file path
-  processed_file_path = convert_to_warm_tone(file_path)
+  # processed_file_path = convert_to_warm_tone(file_path)
+  warm_tone_parameters = ai_choose_warm_tone_parameter(file_path)
+  print(warm_tone_parameters)
+  processed_file_path = convert_to_warm_tone(file_path, warm_tone_parameters['brightness'], warm_tone_parameters['contrast'])
 
   return send_file(processed_file_path, mimetype='image/jpeg')
 

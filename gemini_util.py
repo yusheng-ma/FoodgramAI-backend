@@ -1,5 +1,6 @@
 import os
 import google.generativeai as genai
+import json
 
 genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
@@ -162,6 +163,22 @@ def ai_pick_overlay_image(current_photo_path, category=""):
   overlay_image_paths = [f"./assets/ig/{path.strip()}" for path in overlay_image_paths]
 
   return overlay_image_paths
+
+def ai_choose_warm_tone_parameter(file_path):
+  gemini_file = upload_to_gemini(file_path, mime_type="image/jpeg")
+
+  message_parts = [
+    gemini_file,
+    "User has uploaded a food image and needs to enhance its warm tone. Provide the appropriate image enhancement parameters as a JSON dictionary, focusing on `brightness` and `contrast` values. Ensure that `brightness` is between 1.0 and 1.05, and `contrast` is between 1.15 and 1.25. Return only the JSON object without any explanation or code formatting.",
+    "Example output:\n{\"brightness\": 1.03, \"contrast\": 1.2}"
+  ]
+
+  response = model.generate_content(message_parts)
+
+  # 使用 json.loads() 安全解析 JSON 字符串
+  enhancement_params = json.loads(response.text)
+
+  return enhancement_params
 
 def ai_generate_caption(store_name, items, review):
   response = model.generate_content([

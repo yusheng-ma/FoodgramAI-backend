@@ -6,18 +6,21 @@ PROCESSED_FOLDER = 'processed'
 if not os.path.exists(PROCESSED_FOLDER):
   os.makedirs(PROCESSED_FOLDER)
 
-def convert_to_warm_tone(file_path):
+def convert_to_warm_tone(file_path, brightness=1.0, contrast=1.2):
   with Image.open(file_path) as img:
     if img.mode != "RGB":
       img = img.convert("RGB")
-
-    img = ImageEnhance.Color(img).enhance(1.0)
-    img = ImageEnhance.Brightness(img).enhance(1.2)
-    img = ImageEnhance.Contrast(img).enhance(1.0)
-    img = ImageEnhance.Sharpness(img).enhance(1.5)
-    img = img.filter(ImageFilter.SMOOTH_MORE)
     
-    # Extract the filename and create the new processed file path
+    # 添加暖色調：通過調整紅色和黃色的比例
+    r, g, b = img.split()
+    r = r.point(lambda i: i * 1.1)  # 增加紅色通道
+    b = b.point(lambda i: i * 0.95)  # 減少藍色通道
+    img = Image.merge('RGB', (r, g, b))
+
+    img = ImageEnhance.Brightness(img).enhance(brightness)
+    img = ImageEnhance.Contrast(img).enhance(contrast)
+
+    # 保存處理過的圖片
     filename = os.path.basename(file_path)
     processed_filename = filename.replace('.jpg', '_processed.jpg')
     processed_file_path = os.path.join(PROCESSED_FOLDER, processed_filename)
