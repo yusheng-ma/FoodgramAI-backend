@@ -106,6 +106,10 @@ def get_caption_from_audio():
 
   return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
 
+@app.route('/')
+def hello():
+  return 'Hello, World!'
+
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=5000, debug=False)  # Set host to '0.0.0.0'
 
