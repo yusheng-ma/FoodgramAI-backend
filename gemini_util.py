@@ -159,7 +159,7 @@ def ai_pick_overlay_image(current_photo_path, category=""):
 
   response = chat_session.send_message(message_parts)
   overlay_image_paths = response.text.split(",")
-  overlay_image_paths = [f"./assets/ig/{path}" for path in overlay_image_paths]
+  overlay_image_paths = [f"./assets/ig/{path.strip()}" for path in overlay_image_paths]
 
   return overlay_image_paths
 

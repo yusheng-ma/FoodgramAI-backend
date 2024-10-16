@@ -49,7 +49,7 @@ def get_overlay_image():
   overlay_image_file_paths = ai_pick_overlay_image(file_path, category)  # Pick an overlay image from Gemini
   # there are three files
   
-  return send_file(overlay_image_file_paths[0], mimetype='image/jpeg')
+  return jsonify({'message': 'Overlay image picked successfully', 'overlay_image_file_paths': overlay_image_file_paths}), 200
 
 @app.route('/get_processed_image', methods=['POST'])
 def get_processed_image():
