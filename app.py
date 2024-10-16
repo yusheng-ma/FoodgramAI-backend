@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify, send_file
-from gemini_util import ai_overlay_number, ai_generate_caption, ai_pick_overlay_image, ai_choose_warm_tone_parameter
+from gemini_util import ai_overlay_number, ai_generate_caption, ai_pick_overlay_image, ai_choose_warm_tone_parameter, ai_generate_caption_with_audio
 from image_util import convert_to_warm_tone
 
 # Set up the Flask app
@@ -25,6 +25,20 @@ def save_image():
     uploaded_file.save(file_path)  # Save the image to the server
     return jsonify({'message': 'Image saved successfully', 'file_path': file_path}), 200
 
+@app.route('/save_audio', methods=['POST'])
+def save_audio():
+  if 'audio' not in request.files:
+    return jsonify({'error': 'No file part'}), 400
+
+  uploaded_file = request.files['audio']
+  if uploaded_file.filename == '':
+    return jsonify({'error': 'No selected file'}), 400
+
+  if uploaded_file:
+    file_path = os.path.join(UPLOAD_FOLDER, uploaded_file.filename)
+    uploaded_file.save(file_path)  # Save the audio file to the server
+    return jsonify({'message': 'Audio saved successfully', 'file_path': file_path}), 200
+  
 # will no longer use it? maybe?
 @app.route('/get_overlay_number', methods=['POST'])
 def get_overlay_number():
@@ -77,6 +91,19 @@ def get_caption():
     return jsonify({'error': 'Invalid input'}), 400
 
   caption = ai_generate_caption(store_name, items, review)  # Get the caption from Gemini
+  return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
+
+@app.route('/get_caption_from_audio', methods=['POST'])
+def get_caption_from_audio():
+  data = request.get_json()
+  audio_file_path = data.get('file_path')  # Get the audio file path from the request
+
+  if not audio_file_path:
+    return jsonify({'error': 'Invalid input, file_path missing'}), 400
+
+  # Process the audio file here (e.g., use an audio processing or transcription service)
+  caption = ai_generate_caption_with_audio(audio_file_path)  # Your custom function to get caption
+
   return jsonify({'message': 'Caption generated successfully', 'caption': caption}), 200
 
 if __name__ == '__main__':
